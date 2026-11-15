@@ -113,10 +113,15 @@ body.menu-open .nvbell {
 }
 .nvbell-btn:hover {
   transform: scale(1.08);
+  background: #0b0b0b;
+  color: #fff;
 }
 .nvbell[data-live='true'] .nvbell-btn {
   background: #53fc18;
   animation: cm-pulse 2s infinite;
+}
+.nvbell[data-live='true'] .nvbell-btn:hover {
+  background: #0b0b0b;
 }
 .nvbell[data-live='true'] .nvbell-btn svg {
   animation: nvbell-ring 2.6s ease-in-out infinite;

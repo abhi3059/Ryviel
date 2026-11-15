@@ -47,28 +47,12 @@ export default function Orbit() {
 
       {/* ── fixed top nav ── */}
       <header className="nv-nav">
-        <button type="button" className="nv-pill nv-trailer" data-intro="nav">
-          <span className="nv-label">Play trailer</span>
-          <span className="nv-dot">
-            <svg viewBox="0 0 10 10" aria-hidden="true">
-              <path d="M2.5 1.2 L9 5 L2.5 8.8 z" fill="currentColor" />
-            </svg>
-          </span>
-        </button>
-        <a className="nv-pill nv-market" href="#streams" data-intro="nav">
-          <span className="nv-label">Watch streams</span>
-          <span className="nv-dot">
-            <svg viewBox="0 0 10 10" aria-hidden="true">
-              <path d="M3.6 2.2v5.6M6.4 2.2v5.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </span>
-        </a>
         <button type="button" className="nv-menu-btn" aria-label="Open menu" aria-expanded="false">
           <i />
           <i />
           <i />
         </button>
-        <a className="nv-mini-logo" href="#gaming">
+        <a className="nv-mini-logo" href="#top">
           Ryviel<sup>®</sup>
         </a>
       </header>

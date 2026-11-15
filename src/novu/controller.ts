@@ -36,7 +36,7 @@ export function initOrbit(): () => void {
     t.addEventListener(ev, fn, opts)
     cleanups.push(() => t.removeEventListener(ev, fn, opts))
   }
-  const classes = ['pre', 'video-bg', 'stills', 'scene-on', 'scrolled', 'at-end', 'in-novu', 'menu-open', 'novu-ready', 'past-top']
+  const classes = ['pre', 'video-bg', 'stills', 'scene-on', 'scrolled', 'at-end', 'in-novu', 'menu-open', 'novu-ready', 'past-top', 'name-out']
   cleanups.push(() => body.classList.remove(...classes))
 
   const stage = q('.nv-stage')
@@ -236,6 +236,14 @@ export function initOrbit(): () => void {
     timers.push(window.setTimeout(() => body.classList.remove('pre'), 4000))
     timers.push(window.setTimeout(finish, 6000))
   }
+  // Small logo: shown once the big hero name has scrolled out of view.
+  const heroName = document.getElementById('hero-name')
+  if (heroName) {
+    const nameIO = new IntersectionObserver(([e]) => body.classList.toggle('name-out', !e.isIntersecting), { rootMargin: '-72px 0px 0px 0px' })
+    nameIO.observe(heroName)
+    cleanups.push(() => nameIO.disconnect())
+  }
+
   const io = new IntersectionObserver(
     (entries) => {
       if (entries.some((e) => e.isIntersecting)) fontsReady.then(runIntro)
@@ -279,22 +287,6 @@ export function initOrbit(): () => void {
     if (t?.closest('input, textarea, select, button, a, [contenteditable="true"]')) return
     e.preventDefault()
     nextStop()
-  })
-
-  // "Play trailer" plays the whole orbit by gliding through the story.
-  on(q('.nv-trailer'), 'click', () => {
-    const start = absTop(stage)
-    const end = absTop(story) + story.offsetHeight - window.innerHeight
-    // About 9 s for the full orbit; proportionally less if already part-way through.
-    const glide = () => {
-      const share = (end - window.scrollY) / Math.max(1, end - start)
-      scrollToY(end, 9 * Math.min(1.4, Math.max(0.25, share)), (t) => t)
-    }
-    if (window.scrollY < end - 4) return glide()
-    // Already past the story: rewind to the orbit hero, then glide on the next frames.
-    if (lenis) lenis.scrollTo(start, { immediate: true, force: true })
-    else window.scrollTo({ top: start })
-    requestAnimationFrame(() => requestAnimationFrame(glide))
   })
 
   // ── scroll reveal: stream rows and Instagram posts drop in as they arrive ─

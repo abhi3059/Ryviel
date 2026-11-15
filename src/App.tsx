@@ -1,6 +1,5 @@
 import BackgroundVideo from './components/BackgroundVideo.tsx'
 import RyvielLook from './components/RyvielLook.tsx'
-import Navbar from './components/Navbar.tsx'
 import NavTabs from './components/NavTabs.tsx'
 import NotificationBell from './components/NotificationBell.tsx'
 import SchedulePanel from './components/SchedulePanel.tsx'
@@ -14,7 +13,6 @@ export default function App() {
   return (
     <>
       {HERO_CLIP ? <BackgroundVideo src={HERO_CLIP} /> : <RyvielLook />}
-      <Navbar />
       <NavTabs />
       <NotificationBell />
       <Hero />
