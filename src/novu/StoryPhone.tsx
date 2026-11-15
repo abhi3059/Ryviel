@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import posts from '../data/instagram.json'
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../media.ts'
-import { ReelIcon } from './logos.tsx'
+import { InstagramLogo, ReelIcon } from './logos.tsx'
 
 const N = posts.length
 const DURATION = 3800 // ms each post stays up
@@ -68,6 +68,16 @@ export default function StoryPhone() {
         <span className="nv-label nv-story-eyebrow">Stories, on the website</span>
         <h3>Tap through like the app</h3>
         <p>Posts play one after another with progress bars. Tap the screen to skip, hold to pause, or pick a bubble.</p>
+        <a className="nv-ig-handle" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+          <InstagramLogo className="nv-ig-logo" />
+          <span>
+            <span className="nv-ig-name">Instagram</span>
+            <span className="nv-ig-at">@{INSTAGRAM_HANDLE}</span>
+          </span>
+          <span className="nv-label nv-ig-follow-btn">
+            Follow <i>↗</i>
+          </span>
+        </a>
       </div>
 
       <div className="nv-phone" data-reveal="">
@@ -141,9 +151,6 @@ export default function StoryPhone() {
             </button>
           ))}
         </div>
-        <a className="nv-story-follow nv-label" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
-          See all on @{INSTAGRAM_HANDLE} <i>↗</i>
-        </a>
       </div>
     </div>
   )
