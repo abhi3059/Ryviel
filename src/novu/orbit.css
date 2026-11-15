@@ -347,55 +347,6 @@ body.at-end .nv-bar > * {
   bottom: calc(22 * var(--n));
   width: calc(236 * var(--n));
 }
-.nv-icon-btn {
-  left: calc(305 * var(--n));
-  bottom: calc(22 * var(--n));
-  width: calc(52 * var(--n));
-  height: calc(52 * var(--n));
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--nv-pill);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: transform 0.45s var(--ease-out);
-}
-.nv-icon-btn svg {
-  width: calc(26 * var(--n));
-  height: calc(26 * var(--n));
-}
-.nv-icon-btn:hover {
-  transform: rotate(-12deg) scale(1.06);
-}
-.nv-switch {
-  left: 50%;
-  bottom: calc(32 * var(--n));
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: calc(12 * var(--n));
-}
-.nv-hint {
-  font-size: calc(10 * var(--n));
-  color: #fff;
-  opacity: 0.85;
-}
-.nv-key {
-  height: calc(32 * var(--n));
-  padding: 0 calc(36 * var(--n));
-  border-radius: calc(6 * var(--n));
-  background: var(--nv-ink);
-  color: #fff;
-  font-size: calc(13 * var(--n));
-  cursor: pointer;
-  box-shadow: 0 calc(3 * var(--n)) 0 #000, 0 calc(6 * var(--n)) 14px rgba(0, 0, 0, 0.18);
-  transition: transform 0.14s, box-shadow 0.14s;
-}
-.nv-key.hit {
-  transform: translateY(calc(3 * var(--n)));
-  box-shadow: 0 0 0 #000, 0 calc(3 * var(--n)) 8px rgba(0, 0, 0, 0.18);
-}
 .nv-index {
   left: calc(1111 * var(--n));
   bottom: calc(40 * var(--n));
@@ -875,19 +826,8 @@ body.pre .nv-story .nv-line > span {
   .nv-nav {
     height: 72px;
   }
-  .nv-bar > :not(.nv-switch) {
+  .nv-bar {
     display: none;
-  }
-  .nv-switch {
-    bottom: 20px;
-  }
-  .nv-hint {
-    display: none;
-  }
-  .nv-key {
-    height: 38px;
-    padding: 0 30px;
-    font-size: 12px;
   }
 
   body.stills .nv-scene {

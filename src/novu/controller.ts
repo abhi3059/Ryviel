@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Behaviour for the orbit section: scaling units, wordmark fitting, scroll states, story panels,
-// opening animation, Lenis smooth scroll, menu, the spacebar stops and the scroll reveals.
+// opening animation, Lenis smooth scroll, menu, and the scroll reveals.
 import { startScene, type SceneHandle } from './scene.ts'
 import { startRyvielOrbit } from './ryvielOrbit.ts'
 import { loadScript } from './loadScript.ts'
@@ -117,10 +117,6 @@ export function initOrbit(): () => void {
     lenis = null
   })
   const absTop = (el: HTMLElement) => el.getBoundingClientRect().top + window.scrollY
-  const scrollToY = (y: number, duration = 1.6, easing?: (t: number) => number) => {
-    if (lenis) lenis.scrollTo(y, { duration, easing })
-    else window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' })
-  }
 
   // ── scroll-driven state ──────────────────────────────────────────────────
   const p1 = q('.nv-p1')
@@ -222,7 +218,7 @@ export function initOrbit(): () => void {
     qa('[data-intro="bar"]').forEach((b, i) =>
       A(
         b,
-        { opacity: 0, transform: b.classList.contains('nv-switch') ? 'translateX(-50%) translateY(24px)' : 'translateY(24px)' },
+        { opacity: 0, transform: 'translateY(24px)' },
         900,
         700 + i * 80,
       ),
@@ -266,28 +262,8 @@ export function initOrbit(): () => void {
   on(menuBtn, 'click', () => setMenu(!body.classList.contains('menu-open')))
   qa('.nv-menu a, .nv-menu button').forEach((a) => on(a, 'click', () => setMenu(false)))
 
-  // ── spacebar stops ───────────────────────────────────────────────────────
-  const key = q('.nv-key')
-  const stops = () => {
-    const vh = window.innerHeight
-    const walk = absTop(story)
-    return [absTop(stage), walk + 0.02 * vh, walk + 1.35 * vh, absTop(partners)]
-  }
-  const nextStop = () => {
-    key.classList.add('hit')
-    timers.push(window.setTimeout(() => key.classList.remove('hit'), 140))
-    const y = window.scrollY
-    const target = stops().find((s) => s > y + 4)
-    scrollToY(target ?? 0)
-  }
-  on(key, 'click', nextStop)
   on(window, 'keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Escape') return setMenu(false)
-    if (e.code !== 'Space' || e.repeat) return
-    const t = e.target as HTMLElement | null
-    if (t?.closest('input, textarea, select, button, a, [contenteditable="true"]')) return
-    e.preventDefault()
-    nextStop()
+    if (e.key === 'Escape') setMenu(false)
   })
 
   // ── scroll reveal: stream rows and Instagram posts drop in as they arrive ─

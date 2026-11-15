@@ -83,24 +83,6 @@ export default function Orbit() {
             </svg>
           </span>
         </button>
-        <button type="button" className="nv-icon-btn" aria-label="Random Ryviel" data-intro="bar">
-          <svg viewBox="0 0 28 28" aria-hidden="true">
-            <path d="M4.2 15a9.8 9.8 0 0 1 19.6 0" fill="none" stroke="#0b0b0b" strokeWidth="2.2" />
-            <circle cx="14" cy="15.6" r="8" fill="#0b0b0b" />
-            <rect x="2.6" y="12.6" width="4.2" height="7.4" rx="1.8" fill="#ff5a1f" />
-            <rect x="21.2" y="12.6" width="4.2" height="7.4" rx="1.8" fill="#ff5a1f" />
-            <circle cx="11.2" cy="16" r="2.2" fill="none" stroke="#e9e6e1" strokeWidth="1.2" />
-            <circle cx="16.8" cy="16" r="2.2" fill="none" stroke="#e9e6e1" strokeWidth="1.2" />
-            <path d="M13.4 16h1.2" stroke="#e9e6e1" strokeWidth="1.2" />
-          </svg>
-        </button>
-        <div className="nv-switch" data-intro="bar">
-          <span className="nv-label nv-hint">Press</span>
-          <button type="button" className="nv-key nv-label">
-            Spacebar
-          </button>
-          <span className="nv-label nv-hint">to switch</span>
-        </div>
         <a className="nv-label nv-index" href="#socials" data-intro="bar">
           Socials <NorthEast />
         </a>
