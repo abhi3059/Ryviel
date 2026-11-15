@@ -1,12 +1,11 @@
-import posts from '../data/instagram.json'
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../media.ts'
-import { InstagramLogo, ReelIcon } from './logos.tsx'
+import { InstagramLogo } from './logos.tsx'
+import StoryPhone from './StoryPhone.tsx'
 
 const external = { target: '_blank', rel: 'noreferrer' } as const
 
 /**
- * Instagram grid. Each post drops in as it scrolls into view, softened into the bone page
- * (multiply blend + slight desaturation) and coming to full colour on hover.
+ * Instagram section: the posts play like Instagram stories inside a phone (see StoryPhone).
  * Post images live in public/instagram/; the list is src/data/instagram.json.
  */
 export default function Socials() {
@@ -26,22 +25,7 @@ export default function Socials() {
           </span>
         </a>
       </div>
-      <div className="nv-ig-grid">
-        {posts.map((p) => (
-          <a key={p.code} className="nv-ig-tile" href={p.url} data-reveal="" {...external}>
-            <img src={p.image} alt={`${p.type === 'reel' ? 'Reel' : 'Post'} by @${INSTAGRAM_HANDLE}, ${p.date}`} loading="lazy" />
-            {p.type === 'reel' && <ReelIcon className="nv-ig-reel" />}
-            <span className="nv-ig-date nv-label">{p.date}</span>
-          </a>
-        ))}
-        <a className="nv-ig-tile nv-ig-more" href={INSTAGRAM_URL} data-reveal="" {...external}>
-          <InstagramLogo className="nv-ig-more-logo" />
-          <span className="nv-label">
-            More on
-            <br />@{INSTAGRAM_HANDLE} ↗
-          </span>
-        </a>
-      </div>
+      <StoryPhone />
     </div>
   )
 }

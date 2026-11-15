@@ -5,7 +5,7 @@ One-page site for the streamer avatar **Ryviel**, built with React, TypeScript, 
 - **Hero:** Ryviel sits on a bone-white studio and turns his head as the mouse moves left and right (a mouse-scrubbed video).
 - **Gaming / Walk:** as you scroll, the camera orbits Ryviel while he walks in place (a scroll-scrubbed video, decoded frame by frame with WebCodecs), with the "Ryviel ® GAMING" wordmark and two story panels.
 - **Latest Streams:** recent Kick broadcasts and YouTube uploads, with a live "Live now" badge from Kick.
-- **Socials:** the Instagram grid, where posts drop in as you scroll.
+- **Socials:** the Instagram posts as stories in a phone: auto-advancing with progress bars, tap to skip, hold to pause.
 
 ## Run it
 
