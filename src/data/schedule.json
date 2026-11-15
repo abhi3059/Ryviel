@@ -1,0 +1,13 @@
+{
+  "_note": "PLACEHOLDER weekly schedule: edit it to match your real streams. Times are in the zone given by utcOffsetMinutes (330 = IST); the site shows them in each visitor's own time zone. day: 0 = Sunday … 6 = Saturday.",
+  "utcOffsetMinutes": 330,
+  "durationMinutes": 120,
+  "slots": [
+    { "day": 1, "time": "18:30", "title": "BGMI Live", "note": "Road to Ace", "platform": "kick" },
+    { "day": 2, "time": "18:30", "title": "BGMI Live", "note": "Creator vs viewers", "platform": "kick" },
+    { "day": 3, "time": "18:30", "title": "BGMI Live", "note": "Ranked push", "platform": "kick" },
+    { "day": 4, "time": "18:30", "title": "BGMI Live", "note": "Squad nights", "platform": "kick" },
+    { "day": 5, "time": "18:30", "title": "BGMI Live", "note": "Free-entry matches", "platform": "kick" },
+    { "day": 6, "time": "20:00", "title": "Weekend Special", "note": "Anime + chill, then games", "platform": "youtube" }
+  ]
+}

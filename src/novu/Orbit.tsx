@@ -4,6 +4,7 @@ import { EMAIL, INSTAGRAM_URL, KICK_URL, YOUTUBE_URL } from '../media.ts'
 import RegisteredMark from '../components/RegisteredMark.tsx'
 import Streams from './Streams.tsx'
 import Socials from './Socials.tsx'
+import { openSchedule } from '../lib/ui.ts'
 import './orbit.css'
 
 // Wordmark parts: every character is its own span so the intro can animate it.
@@ -54,9 +55,6 @@ export default function Orbit() {
             </svg>
           </span>
         </button>
-        <span className="nv-label nv-center" data-intro="nav">
-          Headphones on, mic hot
-        </span>
         <a className="nv-pill nv-market" href="#streams" data-intro="nav">
           <span className="nv-label">Watch streams</span>
           <span className="nv-dot">
@@ -65,7 +63,7 @@ export default function Orbit() {
             </svg>
           </span>
         </a>
-        <button type="button" className="nv-menu-btn" aria-label="Open menu" aria-expanded="false" data-intro="nav">
+        <button type="button" className="nv-menu-btn" aria-label="Open menu" aria-expanded="false">
           <i />
           <i />
           <i />
@@ -76,32 +74,31 @@ export default function Orbit() {
       </header>
 
       <nav className="nv-menu" aria-hidden="true">
-        <a href="#gaming">
-          <span>01</span>The Intro
-        </a>
-        <a href="#walk">
-          <span>02</span>The Walk
+        <a href="#top">
+          <span>01</span>Home
         </a>
         <a href="#streams">
-          <span>03</span>Streams
+          <span>02</span>Streams
         </a>
         <a href="#socials">
-          <span>04</span>Socials
+          <span>03</span>Socials
         </a>
+        <button type="button" onClick={openSchedule}>
+          <span>04</span>Schedule
+        </button>
       </nav>
 
       {/* ── fixed bottom bar ── */}
       <div className="nv-bar">
-        <a className="nv-pill nv-roadmap" href="#walk" data-intro="bar">
+        <button type="button" className="nv-pill nv-roadmap" onClick={openSchedule} data-intro="bar">
           <span className="nv-label">Stream schedule</span>
           <span className="nv-dot">
-            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
-              <circle cx="2.7" cy="9.3" r="1.6" />
-              <circle cx="9.3" cy="2.7" r="1.6" />
-              <path d="M4.1 8.4c1.7-.4 1.1-2.4 2.3-3.4.8-.7 1.6-.5 2-.9" />
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" aria-hidden="true">
+              <rect x="1.4" y="2.2" width="9.2" height="8.4" rx="1.8" />
+              <path d="M1.4 5h9.2M4 1v2.4M8 1v2.4" />
             </svg>
           </span>
-        </a>
+        </button>
         <button type="button" className="nv-icon-btn" aria-label="Random Ryviel" data-intro="bar">
           <svg viewBox="0 0 28 28" aria-hidden="true">
             <path d="M4.2 15a9.8 9.8 0 0 1 19.6 0" fill="none" stroke="#0b0b0b" strokeWidth="2.2" />

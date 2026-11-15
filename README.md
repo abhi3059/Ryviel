@@ -29,8 +29,13 @@ npm run build
 | --- | --- |
 | Links, email, clip paths | `src/media.ts` |
 | Kick + YouTube listings | `src/data/streams.json`. Refresh with `npm run feeds` before deploying |
+| Weekly stream schedule | `src/data/schedule.json` (placeholder times: edit to your real ones; shown in each visitor's time zone) |
 | Instagram posts | `src/data/instagram.json` + images in `public/instagram/` |
 | Hero / orbit clips | `public/clips/` (sources in `design/`) |
+
+## Live status
+
+The hero pill, the Watch row and the bell turn green when `kick.com/ryviel` is live (checked every minute). To preview that state without streaming, open the site with `?live=1`.
 
 ## Motion clips
 

@@ -36,7 +36,7 @@ export function initOrbit(): () => void {
     t.addEventListener(ev, fn, opts)
     cleanups.push(() => t.removeEventListener(ev, fn, opts))
   }
-  const classes = ['pre', 'video-bg', 'stills', 'scene-on', 'scrolled', 'at-end', 'in-novu', 'menu-open', 'novu-ready']
+  const classes = ['pre', 'video-bg', 'stills', 'scene-on', 'scrolled', 'at-end', 'in-novu', 'menu-open', 'novu-ready', 'past-top']
   cleanups.push(() => body.classList.remove(...classes))
 
   const stage = q('.nv-stage')
@@ -148,6 +148,7 @@ export function initOrbit(): () => void {
     const vh = window.innerHeight
     const y = window.scrollY
     const stageTop = absTop(stage)
+    body.classList.toggle('past-top', y > 24)
     body.classList.toggle('in-novu', y >= stageTop - vh * 0.2) // after the hero copy has left the screen
     body.classList.toggle('scrolled', y > stageTop + vh * 0.35)
     body.classList.toggle('at-end', partners.getBoundingClientRect().top < vh * 0.55)
@@ -254,7 +255,7 @@ export function initOrbit(): () => void {
     menu.setAttribute('aria-hidden', String(!open))
   }
   on(menuBtn, 'click', () => setMenu(!body.classList.contains('menu-open')))
-  qa('.nv-menu a').forEach((a) => on(a, 'click', () => setMenu(false)))
+  qa('.nv-menu a, .nv-menu button').forEach((a) => on(a, 'click', () => setMenu(false)))
 
   // ── spacebar stops ───────────────────────────────────────────────────────
   const key = q('.nv-key')

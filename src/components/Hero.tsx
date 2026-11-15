@@ -1,37 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTypewriter } from '../hooks/useTypewriter.ts'
-import { EMAIL, KICK_URL, INSTAGRAM_URL } from '../media.ts'
 import RegisteredMark from './RegisteredMark.tsx'
+import ConnectMenu from './ConnectMenu.tsx'
 import './hero.css'
 
 const NAME = 'Ryviel'
 const MESSAGE = 'Glad you dropped in. Headphones on, mic hot. So, what are we playing tonight?'
-const PILLS = [
-  { label: 'Watch the stream', href: KICK_URL },
-  { label: 'Latest streams', href: '#streams' },
-  { label: 'Follow on Instagram', href: INSTAGRAM_URL },
-  { label: 'See him walk', href: '#walk' },
-]
 const INTRO_BLUR_MAX = 8 // px of blur on the intro line once scrolled
 const INTRO_BLUR_DISTANCE = 0.35 // fraction of the viewport height to reach full blur
 
-const pillBase =
-  'inline-flex items-center justify-center rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap transition-colors duration-200 cursor-pointer'
-const whitePill = `${pillBase} bg-white text-black border border-black/10 hover:bg-black hover:text-white`
-
-function CopyIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <rect x="3.5" y="3.5" width="8" height="8" rx="1" stroke="currentColor" />
-      <rect x="0.5" y="0.5" width="8" height="8" rx="1" stroke="currentColor" />
-    </svg>
-  )
-}
-
-export default function Hero({ tone = "dark" }: { tone?: "dark" | "light" }) {
-  // Light tone = white copy, for a hero on a dark background.
-  const light = tone === "light"
-  const inkHex = light ? "#fff" : "#0b0b0b"
+export default function Hero() {
   const { displayed, done } = useTypewriter(MESSAGE, 38, 600)
   const [pillsVisible, setPillsVisible] = useState(false)
   const nameRef = useRef<HTMLHeadingElement>(null)
@@ -86,7 +64,7 @@ export default function Hero({ tone = "dark" }: { tone?: "dark" | "light" }) {
       className="relative z-[1] h-screen min-h-[560px] flex flex-col justify-between pt-[84px] sm:pt-[100px] pb-10 sm:pb-12 px-5 sm:px-8 md:px-10 overflow-hidden"
     >
       {/* Title pinned top-left; the copy sits at the bottom, leaving open room between them. */}
-      <h1 ref={nameRef} id="hero-name" className={`hero-name relative z-10${light ? " hero-name--light" : ""}`} aria-label="Ryviel">
+      <h1 ref={nameRef} id="hero-name" className="hero-name relative z-10" aria-label="Ryviel">
         {[...NAME].map((c, i) => (
           <span key={i} data-char="" aria-hidden="true">
             {c}
@@ -105,7 +83,7 @@ export default function Hero({ tone = "dark" }: { tone?: "dark" | "light" }) {
             fontSize: 'clamp(18px, 4vw, 26px)',
             lineHeight: 1.3,
             fontWeight: 400,
-            color: inkHex,
+            color: '#0b0b0b',
             willChange: 'filter, opacity',
           }}
         >
@@ -115,52 +93,27 @@ export default function Hero({ tone = "dark" }: { tone?: "dark" | "light" }) {
         </p>
 
         <p
-          className={`${light ? "text-white" : "text-[#0b0b0b]"} mb-5 sm:mb-6`}
+          className="text-[#0b0b0b] mb-5 sm:mb-6"
           style={{ fontSize: 'clamp(18px, 4vw, 26px)', lineHeight: 1.35, fontWeight: 400, minHeight: 54 }}
         >
           {displayed}
           {!done && (
             <span
-              className={`inline-block w-[2px] h-[1.1em] ${light ? "bg-white" : "bg-[#0b0b0b]"} align-middle ml-[2px]`}
+              className="inline-block w-[2px] h-[1.1em] bg-[#0b0b0b] align-middle ml-[2px]"
               style={{ animation: 'blink 1s step-end infinite' }}
             />
           )}
         </p>
 
         <div
-          className="flex flex-wrap gap-y-1"
+          className="flex flex-wrap items-center"
           style={{
             opacity: pillsVisible ? 1 : 0,
             transform: pillsVisible ? 'translateY(0)' : 'translateY(8px)',
             transition: 'opacity 0.4s ease, transform 0.4s ease',
           }}
         >
-          {PILLS.map((p) =>
-            p.href ? (
-              <a
-                key={p.label}
-                href={p.href}
-                className={whitePill}
-                {...(p.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-              >
-                {p.label}
-              </a>
-            ) : (
-              <button key={p.label} type="button" className={whitePill}>
-                {p.label}
-              </button>
-            ),
-          )}
-          <button
-            type="button"
-            onClick={() => navigator.clipboard?.writeText(EMAIL).catch(() => {})}
-            className={`${pillBase} gap-2 sm:gap-3 bg-transparent ${light ? "text-white border-white hover:bg-white hover:text-black" : "text-[#0b0b0b] border-[#0b0b0b] hover:bg-[#0b0b0b] hover:text-white"} border`}
-          >
-            <span>
-              Reach us: <span className="underline underline-offset-1">{EMAIL}</span>
-            </span>
-            <CopyIcon />
-          </button>
+          <ConnectMenu />
         </div>
       </div>
     </section>
