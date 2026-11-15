@@ -1,0 +1,7 @@
+node_modules
+dist
+.node
+.claude
+.DS_Store
+*.log
+.vite

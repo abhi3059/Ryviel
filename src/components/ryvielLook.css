@@ -1,0 +1,120 @@
+/* Hero look-around rig. The cut-out is 474×1210; the neck sits at ~33.5% of its height.
+   The stage shares the orbit section's flat bone studio and scrolls with the page, so the hero
+   runs straight into the orbit below with no seam. */
+.ryl-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  background: #e9e6e1;
+}
+/* His lower body melts into the bone floor right where the orbit section begins. */
+.ryl-stage::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34%;
+  background: linear-gradient(rgba(233, 230, 225, 0), #e9e6e1 88%);
+  pointer-events: none;
+}
+.ryl-fig {
+  --x: 66%;
+  position: absolute;
+  left: var(--x);
+  top: 6svh;
+  height: 182svh;
+  aspect-ratio: 474 / 1210;
+  transform: translateX(-50%);
+  perspective: 1500px;
+  perspective-origin: 50% 22%;
+  filter: drop-shadow(1.6vh 2.4vh 4vh rgba(60, 48, 38, 0.18));
+}
+/* Portrait screens: size by width so the head never overflows, and sit nearer the middle.
+   The copy sits over his tee there, so the bone fade reaches higher to keep the ink text readable. */
+@media (max-aspect-ratio: 4/5) {
+  .ryl-fig {
+    --x: 56%;
+    top: max(19svh, 150px); /* below the top-left title */
+    height: min(182svh, 250vw);
+  }
+  .ryl-stage::after {
+    height: 60%;
+    background: linear-gradient(rgba(233, 230, 225, 0), rgba(233, 230, 225, 0.9) 45%, #e9e6e1 85%);
+  }
+}
+.ryl-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform;
+}
+/* Head layer: everything above the collar, feathered just below the chin. */
+.ryl-head {
+  transform-origin: 50% 33%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 34.6%, transparent 37%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 34.6%, transparent 37%);
+}
+/* Body layer: starts under the chin so the turning head never reveals a second chin. */
+.ryl-body {
+  transform-origin: 50% 62%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 32.4%, #000 34%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 32.4%, #000 34%);
+}
+/* Shade: a soft wash on the side of the face turning away, clipped to the head silhouette. */
+.ryl-shade {
+  transform-origin: 50% 33%;
+  background: linear-gradient(
+    to right,
+    rgba(40, 30, 22, calc(var(--shade-r, 0) * 0.38)) 0%,
+    rgba(40, 30, 22, 0) 42%,
+    rgba(40, 30, 22, 0) 58%,
+    rgba(40, 30, 22, calc(var(--shade-l, 0) * 0.38)) 100%
+  );
+  -webkit-mask-image: var(--cut), linear-gradient(to bottom, #000 0%, #000 34.6%, transparent 37%);
+  -webkit-mask-size: 100% 100%, 100% 100%;
+  -webkit-mask-composite: source-in;
+  mask-image: var(--cut), linear-gradient(to bottom, #000 0%, #000 34.6%, transparent 37%);
+  mask-size: 100% 100%, 100% 100%;
+  mask-composite: intersect;
+}
+
+/* Hero clip (ryviel-look-bone.mp4): Ryviel sitting cross-legged, full body, on bone. Because the
+   whole frame is bone apart from him, it can be sized freely: here the clip stands on the hero's
+   floor at 88% of its height, with Ryviel (≈68% across the clip) right of centre. His feet and
+   floor shadow are in shot, so the stage's bottom fade is switched off on wide screens. */
+.ryl-stage--clip::after {
+  display: none;
+}
+.hero-clip {
+  position: absolute;
+  bottom: 0;
+  left: 68%;
+  width: auto;
+  height: min(88%, 64vw);
+  max-width: none;
+  transform: translateX(-68%);
+}
+/* Portrait screens: centre him under the top-left title; the copy sits over his legs there,
+   so the bone fade comes back to keep the text readable. */
+@media (max-aspect-ratio: 4/5) {
+  .ryl-stage--clip::after {
+    display: block;
+  }
+  .hero-clip {
+    bottom: auto;
+    top: max(16svh, 130px);
+    left: 50%;
+    height: 56svh;
+    transform: translateX(-68%);
+  }
+}
+

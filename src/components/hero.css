@@ -1,0 +1,33 @@
+/* Big hero name, pinned top-left: the same type as the "Ryviel ® GAMING" wordmark further down
+   (Archivo 650, stretched 107%, tight, with the circled-R mark), so both read as one brand. */
+.hero-name {
+  display: flex;
+  align-items: flex-start;
+  margin: 0 0 0 -0.045em;
+  font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 650;
+  font-stretch: 107%;
+  font-size: clamp(76px, 10vw, 168px);
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  color: #0b0b0b;
+  white-space: nowrap;
+}
+.hero-name > span {
+  display: inline-block;
+}
+.hero-name .hero-name-r {
+  flex: none;
+  width: 0.38em;
+  height: 0.38em;
+  margin: 0.06em 0 0 0.1em;
+}
+.hero-name .hero-name-r svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-name--light {
+  color: #fff;
+}
