@@ -1205,6 +1205,7 @@ body.menu-open .nv-menu a:nth-child(4) {
   inset: -6%;
   width: 112%;
   height: 112%;
+  max-width: none;
   object-fit: cover;
   opacity: 0;
   filter: blur(10px) saturate(1);
@@ -1495,6 +1496,55 @@ body.menu-open .nv-menu button {
   margin: calc(34 * var(--n)) calc(50 * var(--n)) 0;
   text-align: center;
 }
+/* The current post, blurred, fills the whole Socials section from edge to edge behind the heading and
+   the phone, and follows the story (same treatment as the stream thumbnails). */
+.nv-socials {
+  position: relative;
+}
+.nv-socials > :not(.nv-story-wrap),
+.nv-story-wrap > :not(.nv-story-glow) {
+  position: relative;
+  z-index: 1;
+}
+.nv-story-glow {
+  position: absolute;
+  z-index: 0;
+  inset: 0; /* the glow's containing block is .nv-socials, since .nv-story-wrap is not positioned */
+  pointer-events: none;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+.nv-story-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(233, 230, 225, 0.3); /* a wash of the page colour keeps the text readable */
+}
+.nv-story-glow img {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  max-width: none; /* the page-wide img rule would cap it at 100% and leave a strip uncovered */
+  object-fit: cover;
+  opacity: 0;
+  filter: blur(26px) saturate(1.1);
+  transform: scale(1.06);
+  transition: opacity 0.55s var(--ease-out), transform 1.4s var(--ease-out);
+}
+.nv-story-glow img.on {
+  opacity: 0.85;
+  transform: scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-story-glow img,
+  .nv-story-glow img.on {
+    transition: opacity 0.2s;
+    transform: none;
+  }
+}
+
 .nv-story-head {
   display: grid;
   gap: 12px;

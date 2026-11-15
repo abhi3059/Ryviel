@@ -64,6 +64,12 @@ export default function StoryPhone() {
 
   return (
     <div ref={root} className="nv-story-wrap">
+      {/* the current post, blurred, fills the section behind the phone and changes with the story */}
+      <div className="nv-story-glow" aria-hidden="true">
+        {posts.map((p, i) => (
+          <img key={p.code} src={p.image} alt="" loading={i < 2 ? 'eager' : 'lazy'} draggable={false} className={i === cur ? 'on' : ''} />
+        ))}
+      </div>
       <div className="nv-story-head" data-reveal="">
         <span className="nv-label nv-story-eyebrow">Stories, on the website</span>
         <h3>Tap through like the app</h3>
