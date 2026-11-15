@@ -28,7 +28,7 @@ npm run build
 | What | Where |
 | --- | --- |
 | Links, email, clip paths | `src/media.ts` |
-| Kick + YouTube listings | `src/data/streams.json`. Refresh with `npm run feeds` before deploying |
+| Kick + YouTube listings | Checked live on every visit (Kick: its current broadcast list from the same endpoint kick.com uses, so links always open — Kick deletes broadcasts about a week after the stream; YouTube: each saved video must still exist). `src/data/streams.json` is the saved fallback and where new YouTube uploads come from: run `npm run feeds` to refresh it |
 | Weekly stream schedule | `src/data/schedule.json` (placeholder times: edit to your real ones; shown in each visitor's time zone) |
 | Instagram posts | `src/data/instagram.json` + images in `public/instagram/` |
 | Hero / orbit clips | `public/clips/` (sources in `design/`) |

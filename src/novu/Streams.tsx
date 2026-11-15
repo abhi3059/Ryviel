@@ -1,17 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import streams from '../data/streams.json'
-import { KICK_SLUG } from '../media.ts'
+import { useKickLive } from '../hooks/useKickLive.ts'
+import { useStreamLists, type Row } from '../hooks/useStreamLists.ts'
 import { KickLogo, YouTubeLogo } from './logos.tsx'
-
-type Row = {
-  title: string
-  url: string
-  thumbnail: string
-  date: string
-  views: number
-  durationMs?: number
-  short?: boolean
-}
 
 const thisYear = new Date().getFullYear()
 const fmtDate = (iso: string) => {
@@ -39,6 +30,8 @@ function Column({
   badge,
   rows,
   kind,
+  ready,
+  onBad,
 }: {
   logo: ReactNode
   name: string
@@ -47,6 +40,8 @@ function Column({
   badge?: ReactNode
   rows: Row[]
   kind: 'kick' | 'youtube'
+  ready: boolean
+  onBad: (url: string) => void
 }) {
   return (
     <div className={`nv-stream-col nv-stream-${kind}`}>
@@ -59,12 +54,21 @@ function Column({
           Open channel <i>↗</i>
         </span>
       </a>
-      <ul className="nv-stream-list">
-        {rows.map((r) => (
+      <ul className="nv-stream-list" aria-busy={!ready}>
+        {!ready &&
+          Array.from({ length: 5 }, (_, i) => (
+            <li key={i} className="nv-stream-skel" aria-hidden="true">
+              <span />
+              <span />
+            </li>
+          ))}
+        {ready && rows.length === 0 && <li className="nv-stream-empty">Nothing to show right now. Open the channel to see what's new.</li>}
+        {ready &&
+          rows.map((r) => (
           <li key={r.url} data-reveal="">
             <a className="nv-stream-row" href={r.url} {...external}>
               <span className="nv-stream-thumb">
-                <img src={r.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                <img src={r.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => onBad(r.url)} />
                 {r.durationMs ? <em>{fmtDuration(r.durationMs)}</em> : r.short ? <em>Short</em> : null}
               </span>
               <span className="nv-stream-text">
@@ -84,24 +88,33 @@ function Column({
   )
 }
 
-/** Latest Kick broadcasts and YouTube uploads, listed side by side. */
+/** Latest Kick broadcasts and YouTube uploads, listed side by side and re-checked on every visit. */
 export default function Streams() {
-  // Kick's public API allows browser requests, so the live badge is checked on every visit.
-  const [live, setLive] = useState<{ title: string; viewers: number } | null>(null)
-  useEffect(() => {
-    const ctrl = new AbortController()
-    fetch(`https://kick.com/api/v2/channels/${KICK_SLUG}`, { signal: ctrl.signal, headers: { Accept: 'application/json' } })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((c) => {
-        if (c?.livestream) setLive({ title: c.livestream.session_title, viewers: c.livestream.viewer_count ?? 0 })
-      })
-      .catch(() => {})
-    return () => ctrl.abort()
-  }, [])
+  const { live, title, viewers } = useKickLive()
+  const { kick, youtube, kickReady, youtubeReady, drop } = useStreamLists()
+  const root = useRef<HTMLDivElement>(null)
 
-  const { kick, youtube } = streams
+  // Rows arrive after the checks finish, so they are revealed here as they scroll into view.
+  useEffect(() => {
+    const rows = Array.from(root.current?.querySelectorAll<HTMLElement>('[data-reveal]:not(.in)') ?? [])
+    if (!rows.length) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        const arriving = entries.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement)
+        arriving.forEach((el, i) => {
+          el.style.transitionDelay = `${Math.min(i, 8) * 85}ms`
+          el.classList.add('in')
+          io.unobserve(el)
+        })
+      },
+      { threshold: 0.18, rootMargin: '0px 0px -6% 0px' },
+    )
+    rows.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [kick, youtube, kickReady, youtubeReady])
+
   return (
-    <div className="nv-streams">
+    <div className="nv-streams" ref={root}>
       <span className="nv-p-label">03 /</span>
       <h2 className="nv-p-head">
         Latest
@@ -114,23 +127,27 @@ export default function Streams() {
           logo={<KickLogo className="nv-stream-logo" />}
           name="Kick"
           meta="@ryviel"
-          href={kick.url}
+          href={streams.kick.url}
           badge={
             live ? (
-              <span className="nv-live" title={live.title}>
-                ● Live now · {live.viewers} watching
+              <span className="nv-live" title={title}>
+                ● Live now · {viewers} watching
               </span>
             ) : undefined
           }
-          rows={kick.items}
+          rows={kick}
+          ready={kickReady}
+          onBad={drop}
         />
         <Column
           kind="youtube"
           logo={<YouTubeLogo className="nv-stream-logo" />}
           name="YouTube"
           meta="@Ryviel"
-          href={youtube.url}
-          rows={youtube.items.slice(0, 5)}
+          href={streams.youtube.url}
+          rows={youtube}
+          ready={youtubeReady}
+          onBad={drop}
         />
       </div>
     </div>

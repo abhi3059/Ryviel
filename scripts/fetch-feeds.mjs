@@ -19,19 +19,25 @@ const cleanTitle = (s) => decode(s).replace(/(\s*#[^\s#]+)+\s*$/u, '').trim()
 
 async function kick() {
   const channel = await (await fetch(`https://kick.com/api/v2/channels/${KICK_SLUG}`, { headers: UA })).json()
-  const videos = await (await fetch(`https://kick.com/api/v2/channels/${KICK_SLUG}/videos`, { headers: UA })).json()
+  // The list kick.com itself uses; its ids are the ones kick.com/<channel>/videos/<id> opens.
+  const res = await (await fetch(`https://web.kick.com/api/v1/channels/${channel.id}/videos`, { headers: UA })).json()
+  const now = Date.now()
   return {
     url: `https://kick.com/${KICK_SLUG}`,
     followers: Number(channel.followers_count) || 0,
-    items: videos.slice(0, LIMIT).map((v) => ({
-      title: cleanTitle(v.session_title || 'Kick stream'),
-      url: `https://kick.com/${KICK_SLUG}/videos/${v.video?.uuid}`,
-      thumbnail: v.thumbnail?.src || '',
-      date: `${v.start_time || v.created_at}Z`.replace(' ', 'T'),
-      durationMs: v.duration || 0,
-      views: v.views ?? v.video?.views ?? 0,
-      category: v.categories?.[0]?.name || '',
-    })),
+    items: (res.data || [])
+      .filter((v) => v.id && v.status === 'public' && !v.is_live && !(v.original_expires_at && Date.parse(v.original_expires_at) < now))
+      .slice(0, LIMIT)
+      .map((v) => ({
+        title: cleanTitle(v.title || 'Kick stream'),
+        url: `https://kick.com/${KICK_SLUG}/videos/${v.id}`,
+        thumbnail: v.thumbnail?.src || '',
+        date: v.start_time,
+        durationMs: (v.duration || 0) * 1000,
+        views: v.viewer_count ?? 0,
+        category: v.category?.name || '',
+        expiresAt: v.original_expires_at,
+      })),
   }
 }
 

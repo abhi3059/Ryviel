@@ -30,6 +30,8 @@ export const STORY_STILL = '/ryviel/cut/room.png'
 
 /** Channels. Stream listings come from src/data/streams.json (refresh: npm run feeds). */
 export const KICK_SLUG = 'ryviel'
+/** Kick's numeric channel id (its video list is keyed by it). */
+export const KICK_CHANNEL_ID = 113060229
 export const KICK_URL = 'https://kick.com/ryviel'
 export const YOUTUBE_URL = 'https://www.youtube.com/@Ryviel'
 export const INSTAGRAM_HANDLE = 'ryviel_ig'
