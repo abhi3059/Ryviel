@@ -4,7 +4,6 @@ import { EMAIL, INSTAGRAM_URL, KICK_URL, YOUTUBE_URL } from '../media.ts'
 import RegisteredMark from '../components/RegisteredMark.tsx'
 import Streams from './Streams.tsx'
 import Socials from './Socials.tsx'
-import WalkVideo from './WalkVideo.tsx'
 import { openSchedule } from '../lib/ui.ts'
 import './orbit.css'
 
@@ -159,7 +158,6 @@ export default function Orbit() {
             <div className="nv-frame">
               <img className="nv-story-bg" alt="" aria-hidden="true" />
               <img className="nv-story-still" alt="Ryviel standing full length in his gaming room" />
-              <WalkVideo />
               <article className="nv-panel nv-p1">
                 <span className="nv-panel-label">01 /</span>
                 <h2>

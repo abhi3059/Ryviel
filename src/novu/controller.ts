@@ -28,7 +28,8 @@ export function initOrbit(): () => void {
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const isPhone = () => window.innerWidth <= 820
-  const sceneMode = !reduce && !isPhone()
+  // The scroll-scrubbed scene runs on phones too (framed for a tall screen); only reduced motion gets stills.
+  const sceneMode = !reduce
 
   let destroyed = false
   const cleanups: (() => void)[] = []
@@ -153,7 +154,7 @@ export function initOrbit(): () => void {
     body.classList.toggle('scrolled', y > stageTop + vh * 0.35)
     body.classList.toggle('at-end', partners.getBoundingClientRect().top < vh * 0.55)
 
-    if (isPhone()) {
+    if (!sceneMode) {
       wordmark.style.transform = ''
       return
     }

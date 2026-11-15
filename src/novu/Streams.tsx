@@ -113,7 +113,7 @@ export default function Streams() {
           kind="kick"
           logo={<KickLogo className="nv-stream-logo" />}
           name="Kick"
-          meta={`${kick.followers} followers`}
+          meta="@ryviel"
           href={kick.url}
           badge={
             live ? (

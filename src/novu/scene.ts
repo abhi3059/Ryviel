@@ -8,6 +8,8 @@ import { loadScript } from './loadScript.ts'
 const MP4BOX_SRC = 'https://cdn.jsdelivr.net/npm/mp4box@0.5.2/dist/mp4box.all.min.js'
 const FALLBACK_FPS = 24
 const BITMAP_WINDOW = 56
+const PHONE_BITMAP_WINDOW = 28
+const isPhone = () => window.innerWidth <= 820
 const MAX_INFLIGHT = 8
 
 type RGB = [number, number, number]
@@ -28,7 +30,18 @@ export interface SceneHandle {
 }
 
 const WORKER_SRC = `
-let cv, cx; const q = []; let busy = false;
+let cv, cx, sc, sx; const q = []; let busy = false;
+const centroid = () => {
+  if (!sc) { sc = new OffscreenCanvas(96, 54); sx = sc.getContext('2d', { willReadFrequently: true }); }
+  sx.drawImage(cv, 0, 0, 96, 54);
+  const d = sx.getImageData(0, 0, 96, 54).data; let n = 0, sum = 0;
+  for (let y = 0; y < 54; y++) for (let x = 0; x < 96; x++) { const k = (y * 96 + x) * 4;
+    if (Math.abs(d[k] - 233) + Math.abs(d[k + 1] - 230) + Math.abs(d[k + 2] - 225) > 60) { n++; sum += x; } }
+  let edge = 0;
+  for (let x = 0; x < 96; x++) { const k = (53 * 96 + x) * 4;
+    if (Math.abs(d[k] - 233) + Math.abs(d[k + 1] - 230) + Math.abs(d[k + 2] - 225) > 60) edge++; }
+  return [n > 12 ? (sum / n + 0.5) / 96 : 0.5, edge > 2 ? 1 : 0];
+};
 const avg = (x, h) => {
   const d = cx.getImageData(x, 0, 4, h).data; let r = 0, g = 0, b = 0;
   for (let k = 0; k < d.length; k += 4) { r += d[k]; g += d[k + 1]; b += d[k + 2]; }
@@ -39,9 +52,9 @@ async function next() {
   const { i, t, frame } = job; const w = frame.displayWidth, h = frame.displayHeight;
   if (!cv || cv.width !== w || cv.height !== h) { cv = new OffscreenCanvas(w, h); cx = cv.getContext('2d', { willReadFrequently: true }); }
   cx.drawImage(frame, 0, 0, w, h); frame.close();
-  const L = avg(0, h), R = avg(w - 4, h);
+  const L = avg(0, h), R = avg(w - 4, h), [fx, fc] = centroid();
   const blob = await cv.convertToBlob({ type: 'image/jpeg', quality: 0.88 });
-  postMessage({ i, t, blob, L, R });
+  postMessage({ i, t, blob, L, R, fx, fc });
   next();
 }
 onmessage = (e) => { q.push(e.data); if (!busy) next(); };
@@ -62,16 +75,20 @@ export function startScene(opts: SceneOptions): SceneHandle {
   // ── frame store ────────────────────────────────────────────────────────────
   const blobs: (Blob | undefined)[] = []
   const edges: ([RGB, RGB] | undefined)[] = []
+  const figX: (number | undefined)[] = []
+  const figCut: (number | undefined)[] = [] // 1 where the clip cuts the figure off at its bottom edge
   let total = 0
   let videoW = 1280
   let videoH = 720
   let started = false
   let dirty = true
 
-  function store(i: number, blob: Blob, L: RGB, R: RGB) {
+  function store(i: number, blob: Blob, L: RGB, R: RGB, fx = 0.5, fc = 0) {
     if (destroyed || i < 0 || (total && i >= total)) return
     blobs[i] = blob
     edges[i] = [L, R]
+    figX[i] = fx
+    figCut[i] = fc
     if (i === 0 && !started) {
       started = true
       resize()
@@ -110,7 +127,7 @@ export function startScene(opts: SceneOptions): SceneHandle {
   function evict() {
     const keep = Math.floor(cur)
     for (const key of bitmaps.keys()) {
-      if (bitmaps.size <= BITMAP_WINDOW) break
+      if (bitmaps.size <= (isPhone() ? PHONE_BITMAP_WINDOW : BITMAP_WINDOW)) break
       if (key === keep || key === keep + 1) continue
       bitmaps.get(key)!.close()
       bitmaps.delete(key)
@@ -170,10 +187,32 @@ export function startScene(opts: SceneOptions): SceneHandle {
     const h1 = H
     const w1 = (H * videoW) / videoH
     const x1 = (W - w1) / 2
-    const x = lerp(x0, x1, t)
-    const y = lerp(y0, 0, t)
-    const w = lerp(w0, w1, t)
-    const h = lerp(h0, h1, t)
+    let x = lerp(x0, x1, t)
+    let y = lerp(y0, 0, t)
+    let w = lerp(w0, w1, t)
+    let h = lerp(h0, h1, t)
+    if (isPhone()) {
+      // Tall screen: wordmark and copy sit above the close-up, then the figure rises into the upper part
+      // of the screen for the walk (story text sits below). The crop follows him left and right.
+      // The figure lifts to the top of the screen early (while the hero text scrolls away), so the clip's
+      // own top edge, where the hair is cut off, is already off-screen when the back view arrives.
+      const tp = easeInOutCubic(clamp01((cur / Math.max(1, total - 1) - 0.22) / 0.2))
+      h = lerp(H * 0.62, H * 0.6, tp)
+      w = (h * videoW) / videoH
+      y = lerp(H - H * 0.62, 0, tp)
+      let sum = 0
+      let n = 0
+      const f = Math.round(cur)
+      for (let k = f - 6; k <= f + 6; k++) {
+        const v = figX[k]
+        if (v !== undefined) {
+          sum += v
+          n++
+        }
+      }
+      const fx = n ? sum / n : 0.5
+      x = Math.min(0, Math.max(W - w, W / 2 - fx * w))
+    }
 
     const [L, R] = edges[a] ?? [
       [233, 230, 225],
@@ -182,6 +221,7 @@ export function startScene(opts: SceneOptions): SceneHandle {
     const gapLeft = x > 0.5
     const gapRight = x + w < W - 0.5
     ctx.globalAlpha = 1
+    ctx.clearRect(0, 0, W, H) // the frame may not cover the whole canvas (tall phone screens)
     if (gapLeft || gapRight) {
       const half = Math.round(W / 2)
       ctx.fillStyle = rgb(L)
@@ -194,6 +234,29 @@ export function startScene(opts: SceneOptions): SceneHandle {
       ctx.globalAlpha = frac
       ctx.drawImage(bitmaps.get(b)!, x, y, w, h)
       ctx.globalAlpha = 1
+    }
+    if (isPhone()) {
+      let cut = 0
+      let n = 0
+      const f = Math.round(cur)
+      for (let k = f - 3; k <= f + 3; k++) {
+        if (figCut[k] !== undefined) {
+          cut += figCut[k]!
+          n++
+        }
+      }
+      cut = n ? cut / n : 0
+      if (cut > 0.05 && y + h < H) {
+        const fadeH = h * 0.2
+        const g = ctx.createLinearGradient(0, y + h - fadeH, 0, y + h)
+        g.addColorStop(0, 'rgba(0,0,0,0)')
+        g.addColorStop(1, `rgba(0,0,0,${cut})`)
+        ctx.save()
+        ctx.globalCompositeOperation = 'destination-out'
+        ctx.fillStyle = g
+        ctx.fillRect(0, y + h - fadeH, W, fadeH + 2)
+        ctx.restore()
+      }
     }
     const feather = w * 0.06
     if (gapLeft) {
@@ -288,8 +351,8 @@ export function startScene(opts: SceneOptions): SceneHandle {
       workers.forEach((w) => {
         w.onmessage = (e: MessageEvent) => {
           pending--
-          const { i, blob, L, R } = e.data
-          store(i, blob, L, R)
+          const { i, blob, L, R, fx, fc } = e.data
+          store(i, blob, L, R, fx, fc)
           pump()
         }
         w.onerror = (e) => fail(e.message)
